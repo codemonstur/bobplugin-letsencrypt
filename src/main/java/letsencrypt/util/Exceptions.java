@@ -13,7 +13,7 @@ public enum Exceptions {;
         return new AcmeException("We failed a challenge " + auth.getIdentifier());
     }
     public static AcmeException signingRequestFailed(final Order order) {
-        return new AcmeException("We failed a signing request: " + order.getError());
+        return new AcmeException("We failed a signing request: " + order.getError().map(Object::toString).orElse("unknown error"));
     }
 
 }

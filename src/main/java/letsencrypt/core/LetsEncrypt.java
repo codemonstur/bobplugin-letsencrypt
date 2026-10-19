@@ -49,9 +49,8 @@ public enum LetsEncrypt {;
     }
     private static Dns01Challenge findChallenge(final Authorization auth) throws AcmeException {
         if (auth.getStatus() != PENDING) throw challengeFailedBeforeTried(auth);
-        final Dns01Challenge challenge = auth.findChallenge(Dns01Challenge.TYPE);
-        if (challenge == null) throw new IllegalArgumentException("Missing DNS challenge for LE Authorization");
-        return challenge;
+        return auth.findChallenge(Dns01Challenge.class)
+            .orElseThrow(() -> new IllegalArgumentException("Missing DNS challenge for LE Authorization"));
     }
 
     public static void waitForChallengeAccepted(final Authorization auth, final long maxWaitTime)
@@ -65,7 +64,7 @@ public enum LetsEncrypt {;
 
             //noinspection BusyWait
             Thread.sleep(3_000L);
-            auth.update();
+            auth.fetch();
         }
     }
 
@@ -89,7 +88,7 @@ public enum LetsEncrypt {;
 
             //noinspection BusyWait
             Thread.sleep(3_000);
-            order.update();
+            order.fetch();
         }
     }
 
