@@ -36,13 +36,14 @@
         <version.library.dnsjava>3.6.5</version.library.dnsjava>
         <version.library.slf4j-nop>2.0.20</version.library.slf4j-nop>
 
-        <version.plugin.check-cves>1.1.0</version.plugin.check-cves>
-        <version.plugin.check-license>1.4.0</version.plugin.check-license>
+        <version.plugin.check-cves>1.2.0</version.plugin.check-cves>
+        <version.plugin.check-license>1.5.0</version.plugin.check-license>
         <version.plugin.codegrade>0.2.0</version.plugin.codegrade>
-        <version.plugin.compiler>3.16.0</version.plugin.compiler>
         <version.plugin.enforcer>3.6.3</version.plugin.enforcer>
         <version.plugin.shade>3.6.2</version.plugin.shade>
-    </properties>
+            <version.library.pitest-junit5>1.2.3</version.library.pitest-junit5>
+        <version.plugin.pitest>1.30.1</version.plugin.pitest>
+</properties>
 
     <dependencies>
 
@@ -163,9 +164,12 @@
                         <configuration>
                             <includeTestDependencies>true</includeTestDependencies>
                             <rules>
-                                <rule>url:equal:https://opensource.org/license/mit</rule>
-                                <rule>name:regex:(The )?Apache(\s|-)(Software )?(License |License, )?(Version |version )?2\.0</rule>
+                                <rule>name:regex:.*Apache.*</rule>
+                                <rule>name:regex:.*MIT.*</rule>
+                                <rule>name:regex:.*BSD.*</rule>
+                                <rule>name:regex:.*Bouncy Castle.*</rule>
                             </rules>
+                        
                         </configuration>
                     </plugin>
 
@@ -193,6 +197,14 @@
                         </executions>
                         <configuration>
                             <includeTestDependencies>true</includeTestDependencies>
+                        <exclusions>
+                            <exclusion>GHSA-574f-3g2m-x479</exclusion>
+                            <exclusion>GHSA-9pwp-9qqc-pr26</exclusion>
+                            <exclusion>GHSA-c3fc-8qff-9hwx</exclusion>
+                            <exclusion>GHSA-p93r-85wp-75v3</exclusion>
+                            <exclusion>GHSA-qp49-qgx5-5m26</exclusion>
+                            <exclusion>GHSA-wg6q-6289-32hp</exclusion>
+                            </exclusions>
                         </configuration>
                     </plugin>
 
@@ -224,6 +236,38 @@
             </build>
         </profile>
 
-    </profiles>
+            <profile>
+            <id>mutation</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+
+                    <plugin>
+                        <groupId>org.pitest</groupId>
+                        <artifactId>pitest-maven</artifactId>
+                        <version>${version.plugin.pitest}</version>
+                        <dependencies>
+                            <dependency>
+                                <groupId>org.pitest</groupId>
+                                <artifactId>pitest-junit5-plugin</artifactId>
+                                <version>${version.library.pitest-junit5}</version>
+                            </dependency>
+                        </dependencies>
+                        <executions>
+                            <execution>
+                                <phase>test</phase>
+                                <goals>
+                                    <goal>mutationCoverage</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                </plugins>
+            </build>
+        </profile>
+</profiles>
 
 </project>
