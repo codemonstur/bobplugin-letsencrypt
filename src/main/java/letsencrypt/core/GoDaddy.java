@@ -22,8 +22,19 @@ import static letsencrypt.util.Functions.isInThePast;
 import static org.xbill.DNS.Type.NS;
 import static org.xbill.DNS.Type.TXT;
 
+/**
+ * The {@code GoDaddy} enum.
+ */
 public enum GoDaddy {;
 
+    /**
+     * Returns the result of {@code getRecords}.
+     *
+     * @param apiKey the api key
+     * @param domain the domain
+     * @return the result
+     * @throws IOException if the operation fails
+     */
     public static List<DnsRecord> getRecords(final String apiKey, final String domain) throws IOException {
         return newHttpsCall("api.godaddy.com")
             .get("/v1/domains/%s/records", domain)
@@ -32,10 +43,30 @@ public enum GoDaddy {;
             .fetchInto(TYPE_LIST_RECORDS);
     }
 
+    /**
+     * Performs the {@code setRecord} operation.
+     *
+     * @param apiKey the new value
+     * @param domain the new value
+     * @param type the new value
+     * @param name the new value
+     * @param value the new value
+     * @throws IOException if the operation fails
+     */
     public static void setRecord(final String apiKey, final String domain, final String type, final String name, final String value) throws IOException {
         setRecord(apiKey, domain, type, name, singletonList(new DnsRecord(type, name, value)));
     }
 
+    /**
+     * Performs the {@code setRecord} operation.
+     *
+     * @param apiKey the new value
+     * @param domain the new value
+     * @param type the new value
+     * @param name the new value
+     * @param records the new value
+     * @throws IOException if the operation fails
+     */
     public static void setRecord(final String apiKey, final String domain, final String type, final String name, final List<DnsRecord> records) throws IOException {
         newHttpsCall("api.godaddy.com")
             .put("/v1/domains/%s/records/%s/%s", domain, type, name)
@@ -46,6 +77,15 @@ public enum GoDaddy {;
             .execute();
     }
 
+    /**
+     * Performs the {@code deleteRecord} operation.
+     *
+     * @param apiKey the api key
+     * @param domain the domain
+     * @param type the type
+     * @param name the name
+     * @throws IOException if the operation fails
+     */
     public static void deleteRecord(final String apiKey, final String domain, final String type, final String name) throws IOException {
         newHttpsCall("api.godaddy.com")
             .put("/v1/domains/%s/records/%s/%s", domain, type, name)
@@ -61,6 +101,18 @@ public enum GoDaddy {;
     // whole world already gets the right value. It will not pass until the 10-minute timeout is over.
     //
     // So we are better off just waiting 10 minutes.
+    /**
+     * Performs the {@code waitForGoDaddyUpdate} operation.
+     *
+     * @param domain the domain
+     * @param name the name
+     * @param expected the expected
+     * @param maxWait the max wait
+     * @throws TextParseException if the operation fails
+     * @throws UnknownHostException if the operation fails
+     * @throws InterruptedException if the operation fails
+     * @throws TimeoutException if the operation fails
+     */
     public static void waitForGoDaddyUpdate(final String domain, final String name, final String expected, final long maxWait)
             throws TextParseException, UnknownHostException, InterruptedException, TimeoutException {
         final var hostname = name + "." + domain;
@@ -75,12 +127,28 @@ public enum GoDaddy {;
         }
     }
 
+    /**
+     * Returns the result of {@code nameservers}.
+     *
+     * @param domain the domain
+     * @return the result
+     * @throws TextParseException if the operation fails
+     */
     public static List<String> nameservers(final String domain) throws TextParseException {
         final var lookup = new Lookup(domain, NS).run();
         if (lookup == null) return Collections.emptyList();
         return stream(lookup).map(Record::getAdditionalName).map(Name::toString).collect(toList());
     }
 
+    /**
+     * Returns the result of {@code listTxtRecords}.
+     *
+     * @param nameservers the nameservers
+     * @param hostname the hostname
+     * @return the result
+     * @throws TextParseException if the operation fails
+     * @throws UnknownHostException if the operation fails
+     */
     public static List<String> listTxtRecords(final List<String> nameservers, final String hostname)
             throws TextParseException, UnknownHostException {
         final List<String> records = new ArrayList<>();

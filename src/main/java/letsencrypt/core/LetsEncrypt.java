@@ -14,8 +14,20 @@ import static letsencrypt.util.Exceptions.*;
 import static letsencrypt.util.Functions.isInThePast;
 import static org.shredzone.acme4j.Status.*;
 
+/**
+ * The {@code LetsEncrypt} enum.
+ */
 public enum LetsEncrypt {;
 
+    /**
+     * Returns the result of {@code newLetsEncryptAccount}.
+     *
+     * @param session the session
+     * @param keyPair the key pair
+     * @param email the email
+     * @return the result
+     * @throws AcmeException if the operation fails
+     */
     public static Account newLetsEncryptAccount(final Session session, final KeyPair keyPair, final String email) throws AcmeException {
         return new AccountBuilder()
             .addContact("mailto:" + email)
@@ -24,6 +36,14 @@ public enum LetsEncrypt {;
             .create(session);
     }
 
+    /**
+     * Returns the result of {@code loadLetsEncryptAccount}.
+     *
+     * @param accountKeyPair the account key pair
+     * @param session the session
+     * @return the result
+     * @throws AcmeException if the operation fails
+     */
     public static Account loadLetsEncryptAccount(final KeyPair accountKeyPair, final Session session) throws AcmeException {
         return new AccountBuilder()
             .onlyExisting()
@@ -31,10 +51,26 @@ public enum LetsEncrypt {;
             .create(session);
     }
 
+    /**
+     * Returns the result of {@code getDNSChallengeDigest}.
+     *
+     * @param order the order
+     * @return the result
+     * @throws AcmeException if the operation fails
+     */
     public static String getDNSChallengeDigest(final Order order) throws AcmeException {
         return findChallenge(findAuthorization(order)).getDigest();
     }
 
+    /**
+     * Performs the {@code executeChallengeAndWait} operation.
+     *
+     * @param order the order
+     * @param maxWaitTime the max wait time
+     * @throws AcmeException if the operation fails
+     * @throws InterruptedException if the operation fails
+     * @throws TimeoutException if the operation fails
+     */
     public static void executeChallengeAndWait(final Order order, final long maxWaitTime) throws AcmeException, InterruptedException, TimeoutException {
         final var auth = findAuthorization(order);
         findChallenge(auth).trigger();
@@ -53,6 +89,15 @@ public enum LetsEncrypt {;
             .orElseThrow(() -> new IllegalArgumentException("Missing DNS challenge for LE Authorization"));
     }
 
+    /**
+     * Performs the {@code waitForChallengeAccepted} operation.
+     *
+     * @param auth the auth
+     * @param maxWaitTime the max wait time
+     * @throws InterruptedException if the operation fails
+     * @throws AcmeException if the operation fails
+     * @throws TimeoutException if the operation fails
+     */
     public static void waitForChallengeAccepted(final Authorization auth, final long maxWaitTime)
             throws InterruptedException, AcmeException, TimeoutException {
         final long stopTime = currentTimeMillis() + maxWaitTime;
@@ -68,6 +113,15 @@ public enum LetsEncrypt {;
         }
     }
 
+    /**
+     * Returns the result of {@code newCertificateSigningRequest}.
+     *
+     * @param domainKeyPair the domain key pair
+     * @param organization the organization
+     * @param hostname the hostname
+     * @return the result
+     * @throws IOException if the operation fails
+     */
     public static byte[] newCertificateSigningRequest(final KeyPair domainKeyPair, final String organization
             , final String hostname) throws IOException {
         final CSRBuilder csr = new CSRBuilder();
@@ -77,6 +131,15 @@ public enum LetsEncrypt {;
         return csr.getEncoded();
     }
 
+    /**
+     * Performs the {@code waitingForOrderCompletion} operation.
+     *
+     * @param order the order
+     * @param maxWait the max wait
+     * @throws InterruptedException if the operation fails
+     * @throws AcmeException if the operation fails
+     * @throws TimeoutException if the operation fails
+     */
     public static void waitingForOrderCompletion(final Order order, final long maxWait)
             throws InterruptedException, AcmeException, TimeoutException {
         final long stopAt = currentTimeMillis() + maxWait;

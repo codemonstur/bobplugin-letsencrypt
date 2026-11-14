@@ -29,24 +29,24 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <maven.compiler.release>17</maven.compiler.release>
-        <maven.version>[3.6.3,)</maven.version>
+        <maven.version>[3.9.0,)</maven.version>
 
         <version.library.acme4j-client>5.1.0</version.library.acme4j-client>
         <version.library.bobthebuildtool>12</version.library.bobthebuildtool>
-        <version.library.dnsjava>3.6.5</version.library.dnsjava>
+        <version.library.dnsjava>3.7.1</version.library.dnsjava>
         <version.library.slf4j-nop>2.0.20</version.library.slf4j-nop>
 
         <version.plugin.check-cves>1.2.0</version.plugin.check-cves>
         <version.plugin.check-license>1.5.0</version.plugin.check-license>
         <version.plugin.codegrade>0.2.0</version.plugin.codegrade>
-        <version.plugin.enforcer>3.6.3</version.plugin.enforcer>
+        <version.plugin.enforcer>3.7.0</version.plugin.enforcer>
         <version.plugin.shade>3.6.2</version.plugin.shade>
             <version.library.pitest-junit5>1.2.3</version.library.pitest-junit5>
-        <version.plugin.pitest>1.30.1</version.plugin.pitest>
+        <version.plugin.pitest>1.30.2</version.plugin.pitest>
         <!-- default for @{argLine}; jacoco's prepare-agent appends the agent when it runs -->
         <argLine></argLine>
-            <version.plugin.jacoco>0.8.15</version.plugin.jacoco>
-            <version.plugin.surefire>3.6.0</version.plugin.surefire>
+            <version.plugin.jacoco>0.8.16</version.plugin.jacoco>
+            <version.plugin.surefire>3.6.1</version.plugin.surefire>
     </properties>
 
     <dependencies>

@@ -10,6 +10,9 @@ import letsencrypt.actions.ListGoDaddyRecords;
 
 import static bobthebuildtool.services.Update.requireBobVersion;
 
+/**
+ * The {@code BobPlugin} enum.
+ */
 public enum BobPlugin {;
 
     private static final String
@@ -18,6 +21,12 @@ public enum BobPlugin {;
         DESCRIPTION_KEYPAIR = "Create a keypair for use in LetsEncrypt accounts or certificates",
         DESCRIPTION_LIST_DNS = "List DNS records in GoDaddy";
 
+    /**
+     * Performs the {@code installPlugin} operation.
+     *
+     * @param project the project
+     * @throws VersionTooOld if the operation fails
+     */
     public static void installPlugin(final Project project) throws VersionTooOld {
         requireBobVersion("7");
 

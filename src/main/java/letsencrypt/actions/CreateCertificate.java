@@ -20,39 +20,94 @@ import static letsencrypt.util.Crypto.loadKeyPair;
 import static letsencrypt.util.Crypto.writeCertificate;
 import static letsencrypt.util.Functions.logInfo;
 
+/**
+ * The {@code CreateCertificate} enum.
+ */
 public enum CreateCertificate {;
 
+    /**
+     * The {@code CliArguments} class.
+     */
     @CliCommand(name = "le-certificate", description = """
         The create-certificate command allows for generating certificates using LetsEncrypt and GoDaddy.
         It will request a DNS TXT record challenge and set the proper value through the GoDaddy API to
         pass the challenge. It is possible to generate both normal and wildcard certificates this way.
         """)
     public static final class CliArguments {
+        /**
+         * The {@code staging} field.
+         */
         @CliOption(longName = "staging", description = "Flag to use the staging server URI instead of the production URI")
         public boolean staging;
 
+        /**
+         * The {@code organization} field.
+         */
         @CliOption(longName = "organization", isMandatory = true, description = "The organization name in the certificate")
         public String organization;
+        /**
+         * The {@code domain} field.
+         */
         @CliOption(name = 'd', longName = "domain", isMandatory = true, description = "The domain to use for DNS records")
         public String domain;
+        /**
+         * The {@code hostname} field.
+         */
         @CliOption(name = 'h', longName = "hostname", isMandatory = true, description = "A hostname to request a certificate for")
         public String hostname;
+        /**
+         * The {@code domainKeyPairFile} field.
+         */
         @CliOption(name = 'k', longName = "domain-keypair-file", isMandatory = true)
         public String domainKeyPairFile;
+        /**
+         * The {@code accountKeyPairFile} field.
+         */
         @CliOption(name = 'a', longName = "account-keypair-file", isMandatory = true)
         public String accountKeyPairFile;
+        /**
+         * The {@code outputFile} field.
+         */
         @CliOption(name = 'o', longName = "output-file", isMandatory = true)
         public String outputFile;
+        /**
+         * The {@code godaddyApiKey} field.
+         */
         @CliOption(longName = "api-key", isMandatory = true, description = "The GoDaddy API key in [API_KEY]:[API_SECRET] format")
         public String godaddyApiKey;
 
+        /**
+         * The {@code quiet} field.
+         */
         @CliOption(name = 'q', longName = "quiet", description = "Print no output")
         public boolean quiet;
 
+        /**
+         * The {@code help} field.
+         */
         @CliOption(longName = "help", isHelp = true)
         public boolean help;
+
+        /**
+         * Creates a new instance.
+         */
+        public CliArguments() {
+        }
     }
 
+    /**
+     * Returns the result of {@code createCertificate}.
+     *
+     * @param project the project
+     * @param env the env
+     * @param args the command-line arguments
+     * @return the result
+     * @throws AcmeException if the operation fails
+     * @throws IOException if the operation fails
+     * @throws InterruptedException if the operation fails
+     * @throws InvalidCommandLine if the operation fails
+     * @throws TimeoutException if the operation fails
+     */
     public static int createCertificate(final Project project, final Map<String, String> env, final String[] args)
             throws AcmeException, IOException, InterruptedException, InvalidCommandLine, TimeoutException {
         final CliArguments arguments = newCliParser(CliArguments::new).parse(args);
@@ -101,6 +156,13 @@ public enum CreateCertificate {;
     // *.domain.tld -> _acme-challenge
     // something.domain.tld -> _acme-challenge.something
     // something.something.domain.tld -> _acme-challenge.something.something
+    /**
+     * Returns the result of {@code toAcmeChallengeName}.
+     *
+     * @param domain the domain
+     * @param hostname the hostname
+     * @return the result
+     */
     public static String toAcmeChallengeName(final String domain, final String hostname) {
         final int offsetDomain = hostname.length() - (domain.length() + 1);
         if (hostname.startsWith("*.")) {
